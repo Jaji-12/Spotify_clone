@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify - Web Player: Music for everyone</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://cdn.pixabay.com">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="loader-wrapper">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" class="loader-logo" alt="Spotify" width="90" height="90">
+    </div>
+
+    <div id="toast-notification-hub"></div>
+    <div class="toast"></div>
+
+    <div id="custom-context-menu" class="context-menu-node">
+        <div class="context-item" id="ctx-play-trigger"><i class="fa-solid fa-play"></i> Play Collection</div>
+        <div class="context-item" id="ctx-queue-trigger"><i class="fa-solid fa-layer-group"></i> Add to Queue</div>
+        <hr class="context-divider">
+        <div class="context-item" id="ctx-save-trigger"><i class="fa-solid fa-heart"></i> Save to Your Library</div>
+    </div>
+
+    <div class="app-container">
+        
+        <aside class="sidebar-aside" id="sidebar-target">
+            <div class="sidebar-block logo-block">
+                <i class="fab fa-spotify"><span>Spotify</span></i>
+            </div>
+            
+            <nav class="sidebar-block navigation-block">
+                <a class="sidebar-action-link active" id="nav-btn-home">
+                    <i class="fa-solid fa-house"></i> <span>Home</span>
+                </a>
+                <a class="sidebar-action-link" id="nav-btn-search">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span>Search</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-block library-block flex-grow-section">
+                <div class="library-header-row">
+                    <div class="sidebar-action-link default-cursor" style="padding:0; margin:0;">
+                        <i class="fa-solid fa-book"></i> <span>Your Library</span>
+                    </div>
+                    <button class="action-circle-btn" id="sidebar-create-playlist-btn" title="Create Playlist"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                
+                <div class="scroll-action-links">
+                    <div class="sidebar-action-link item-sub-link" id="sub-link-create-playlist">
+                        <div class="square-icon-box plus-gradient-bg"><i class="fa-solid fa-plus"></i></div>
+                        <span>Create Playlist</span>
+                    </div>
+                    <div class="sidebar-action-link item-sub-link" id="sub-link-liked-songs">
+                        <div class="square-icon-box heart-gradient-bg"><i class="fa-solid fa-heart"></i></div>
+                        <span>Liked Songs</span>
+                    </div>
+                    <div class="sidebar-action-link item-sub-link" id="sub-link-episodes">
+                        <div class="square-icon-box podcast-gradient-bg"><i class="fa-solid fa-bookmark"></i></div>
+                        <span>Your Episodes</span>
+                    </div>
+                </div>
+                
+                <hr class="sidebar-separator-line">
+                <div id="sidebar-playlists-target" class="interactive-playlists-stack"></div>
+            </div>
+
+            <div class="sidebar-block system-badge-download">
+                <a class="sidebar-action-link" href="#" id="sidebar-install-link">
+                    <i class="fa-regular fa-circle-down"></i> <span>Install App</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content-view" id="main-scroll-canvas">
+            
+            <header class="top-navigation-navbar" id="sticky-header">
+                <div class="navbar-left-cluster">
+                    <div class="navigation-history-arrows">
+                        <button class="history-arrow-btn" title="Back"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="history-arrow-btn" title="Forward"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <div class="search-input-frame" id="search-bar-global-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-frame-icon"></i>
+                        <input type="text" id="global-search-input" placeholder="What do you want to listen to?">
+                        <i class="fa-solid fa-xmark search-clear-icon" id="search-clear-btn"></i>
+                    </div>
+                </div>
+                
+                <div class="navbar-right-cluster">
+                    <button class="pill-badge-btn premium-btn" id="navbar-premium-btn">Explore Premium</button>
+                    <button class="pill-badge-btn download-app-btn" id="navbar-install-btn"><i class="fa-regular fa-circle-down"></i> Install App</button>
+                    <div class="profile-avatar-badge" id="navbar-profile-badge">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="canvas-inner-body" id="canvas-core-body">
+                
+                <section class="shelf-section hidden-element-view" id="search-results-section">
+                    <div class="shelf-header-row">
+                        <h2>Search Results</h2>
+                    </div>
+                    <div class="shelf-cards-grid" id="search-results-target"></div>
+                </section>
+
+                <section class="shelf-section" id="greeting-hero-block">
+                    <h1 id="greeting-text-node">Good Evening</h1>
+                    <div class="greeting-cards-matrix" id="greeting-matrix-target"></div>
+                </section>
+
+                <div id="standard-shelves-container-stack">
+                    
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>Recently Played</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-recent-target"></div>
+                    </section>
+
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>Trending Now</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-trending-target"></div>
+                    </section>
+
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>Popular Artists</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-artists-target"></div>
+                    </section>
+
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>Made For You</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-curated-target"></div>
+                    </section>
+
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>Featured Charts</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-charts-target"></div>
+                    </section>
+
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>Popular Podcasts</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-podcasts-target"></div>
+                    </section>
+
+                    <section class="shelf-section">
+                        <div class="shelf-header-row">
+                            <h2>New Releases</h2>
+                            <span class="see-all-trigger">See all</span>
+                        </div>
+                        <div class="shelf-cards-grid" id="shelf-releases-target"></div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-navigation-hud">
+            <div class="mobile-hud-actionactive" id="mobile-nav-home">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </div>
+            <div class="mobile-hud-action" id="mobile-nav-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Search</span>
+            </div>
+            <div class="mobile-hud-action" id="mobile-nav-library">
+                <i class="fa-solid fa-book"></i>
+                <span>Library</span>
+            </div>
+        </nav>
+
+        <footer class="now-playing-panel">
+            <div class="panel-column-left player-meta-cluster">
+                <div class="album-cover-frame">
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120&q=70" class="album-cover" id="player-album-cover" alt="Album Artwork" width="56" height="56" loading="lazy">
+                    <div class="equalizer-overlay" id="equalizer-bars-frame">
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                    </div>
+                </div>
+                <div class="track-text-metadata">
+                    <div class="song-title" id="player-track-title">Initialize Engine</div>
+                    <div class="artist-name" id="player-track-artist">Select audio path</div>
+                </div>
+                <button class="meta-action-btn" id="player-heart-toggle" title="Add to Liked Songs">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="panel-column-center player-playback-cluster">
+                <div class="playback-controls-row">
+                    <button class="hud-control-icon" id="btn-shuffle" title="Shuffle Mode"><i class="fa-solid fa-shuffle"></i></button>
+                    <button class="hud-control-icon forward-backward-btns" id="btn-prev-track" title="Previous Song"><i class="fa-solid fa-backward-step"></i></button>
+                    <button class="hud-control-icon play-btn master-play-pause-trigger" id="btn-master-playback" title="Play / Pause"><i class="fa-solid fa-play"></i></button>
+                    <button class="hud-control-icon forward-backward-btns" id="btn-next-track" title="Next Song"><i class="fa-solid fa-forward-step"></i></button>
+                    <button class="hud-control-icon" id="btn-repeat" title="Repeat Mode"><i class="fa-solid fa-repeat"></i></button>
+                </div>
+
+                <div class="playback-timeline-row">
+                    <span class="timeline-timestamp" id="lbl-time-elapsed">0:00</span>
+                    <div class="progress-container custom-range-slider-container">
+                        <input type="range" class="timeline-slider-input native-range-element" id="timeline-range-hardware" min="0" max="100" value="0">
+                        <div class="slider-track-rail">
+                            <div class="progress slider-fill-progress" id="timeline-fill-bar"></div>
+                            <div class="slider-thumb-pointer" id="timeline-thumb-node"></div>
+                        </div>
+                    </div>
+                    <span class="timeline-timestamp" id="lbl-time-total">0:00</span>
+                </div>
+            </div>
+
+            <div class="panel-column-right player-utilities-cluster">
+                <button class="hud-control-icon utility-btn" id="utility-lyrics-btn" title="Lyrics Window"><i class="fa-solid fa-microphone"></i></button>
+                <button class="hud-control-icon utility-btn" id="utility-queue-btn" title="Queue Panel"><i class="fa-solid fa-bars"></i></button>
+                <button class="hud-control-icon utility-btn" id="utility-cast-btn" title="Connect to External Device"><i class="fa-solid fa-computer"></i></button>
+                
+                <div class="volume-mixer-module">
+                    <button class="hud-control-icon utility-btn" id="btn-volume-icon" style="margin:0; width:auto;" title="Mute/Unmute"><i class="fa-solid fa-volume-high"></i></button>
+                    <div class="custom-range-slider-container" style="width: 90px;">
+                        <input type="range" class="volume-slider native-range-element" id="volume-range-hardware" min="0" max="1" step="0.01" value="0.75">
+                        <div class="slider-track-rail">
+                            <div class="slider-fill-progress" id="volume-fill-bar"></div>
+                            <div class="slider-thumb-pointer" id="volume-thumb-node"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="hud-control-icon utility-btn" id="utility-fullscreen-btn" title="Toggle Fullscreen Canvas Layout"><i class="fa-solid fa-expand"></i></button>
+            </div>
+        </footer>
+    </div>
+
+    <audio id="audio-player" controls style="display: none; position: fixed; bottom: 10px; left: 10px; z-index: 99999;"></audio>
+
+</body>
+</html>
